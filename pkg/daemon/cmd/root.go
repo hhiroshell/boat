@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
@@ -31,6 +32,12 @@ func Execute() {
 }
 
 func run(_ *cobra.Command, _ []string) error {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+	sock := filepath.Join(home, ".kube-boat", "daemon.socket")
+
 	testEnv := &envtest.Environment{}
 	config, err := testEnv.Start()
 	if err != nil {
@@ -52,7 +59,7 @@ func run(_ *cobra.Command, _ []string) error {
 			})
 		}
 
-		if err := os.Remove("./daemon.socket"); err != nil {
+		if err := os.Remove(sock); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": "failed to clean up the socket file. please delete \"./daemon.socket\"",
 			})
@@ -65,7 +72,7 @@ func run(_ *cobra.Command, _ []string) error {
 		os.Exit(0)
 	})
 
-	if err := engine.RunUnix("/var/run/kube-boat-daemon.socket"); err != nil {
+	if err := engine.RunUnix(sock); err != nil {
 		fmt.Print(err)
 		if err := testEnv.Stop(); err != nil {
 			return err

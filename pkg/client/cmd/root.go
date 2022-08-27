@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -30,10 +31,15 @@ func Execute() {
 }
 
 func run(_ *cobra.Command, _ []string) error {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+
 	client := http.Client{
 		Transport: &http.Transport{
 			DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
-				return net.Dial("unix", "/var/run/kube-boat-daemon.socket")
+				return net.Dial("unix", filepath.Join(home, ".kube-boat", "daemon.socket"))
 			},
 		},
 	}
