@@ -1,57 +1,32 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
-	"io"
-	"net"
-	"net/http"
-	"os"
-	"path/filepath"
-
 	"github.com/spf13/cobra"
+	"os/exec"
 )
 
 var startCmd = &cobra.Command{
-	Use:           "config",
+	Use:           "start",
 	Short:         "",
 	Long:          ``,
 	SilenceErrors: true,
 	SilenceUsage:  true,
-	RunE:          config,
+	RunE:          start,
 }
 
 func init() {
 	rootCmd.AddCommand(startCmd)
 }
 
-func config(_ *cobra.Command, _ []string) error {
-	home, err := os.UserHomeDir()
-	if err != nil {
+func start(_ *cobra.Command, _ []string) error {
+	cmd := exec.Command("./boat", "serve")
+
+	if err := cmd.Start(); err != nil {
 		return err
 	}
+	fmt.Println("starting kube api server...")
 
-	client := http.Client{
-		Transport: &http.Transport{
-			DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
-				return net.Dial("unix", filepath.Join(home, ".kube-boat", "daemon.socket"))
-			},
-		},
-	}
-
-	res, err := client.Get("http://localhost/testenv")
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(res.Status)
-	fmt.Println(string(body))
-
+	// TODO: wait for the daemon become running
 	return nil
 }
