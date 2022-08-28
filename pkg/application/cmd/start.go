@@ -12,25 +12,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func Execute() {
-	rootCmd := &cobra.Command{
-		Use:           "boat",
-		Short:         "",
-		Long:          ``,
-		Args:          cobra.MaximumNArgs(1),
-		SilenceErrors: true,
-		SilenceUsage:  true,
-		RunE:          run,
-	}
-
-	err := rootCmd.Execute()
-	if err != nil {
-		//Log.Info("exit with error", zap.Error(err))
-		os.Exit(1)
-	}
+var startCmd = &cobra.Command{
+	Use:           "config",
+	Short:         "",
+	Long:          ``,
+	SilenceErrors: true,
+	SilenceUsage:  true,
+	RunE:          config,
 }
 
-func run(_ *cobra.Command, _ []string) error {
+func init() {
+	rootCmd.AddCommand(startCmd)
+}
+
+func config(_ *cobra.Command, _ []string) error {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return err

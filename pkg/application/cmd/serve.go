@@ -14,24 +14,20 @@ import (
 	"github.com/hhiroshell/kube-boat/pkg/common"
 )
 
-func Execute() {
-	rootCmd := &cobra.Command{
-		Use:           "boat-daemon",
-		Short:         "Start a standalone, local Kubernetes api server.",
-		Long:          `Start a standalone, local Kubernetes api server.`,
-		SilenceErrors: true,
-		SilenceUsage:  true,
-		RunE:          run,
-	}
-
-	err := rootCmd.Execute()
-	if err != nil {
-		//Log.Info("exit with error", zap.Error(err))
-		os.Exit(1)
-	}
+var serveCmd = &cobra.Command{
+	Use:           "serve",
+	Short:         "Start a standalone, local Kubernetes api server.",
+	Long:          `Start a standalone, local Kubernetes api server.`,
+	SilenceErrors: true,
+	SilenceUsage:  true,
+	RunE:          serve,
 }
 
-func run(_ *cobra.Command, _ []string) error {
+func init() {
+	rootCmd.AddCommand(serveCmd)
+}
+
+func serve(_ *cobra.Command, _ []string) error {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return err
