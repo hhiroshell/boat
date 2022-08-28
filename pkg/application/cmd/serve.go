@@ -3,9 +3,12 @@ package cmd
 import (
 	"encoding/base64"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
@@ -18,6 +21,7 @@ var serveCmd = &cobra.Command{
 	Use:           "serve",
 	Short:         "Start a standalone, local Kubernetes api server.",
 	Long:          `Start a standalone, local Kubernetes api server.`,
+	Hidden:        true,
 	SilenceErrors: true,
 	SilenceUsage:  true,
 	RunE:          serve,
@@ -41,6 +45,7 @@ func serve(_ *cobra.Command, _ []string) error {
 	}
 
 	engine := gin.Default()
+
 	engine.GET("/testenv", func(c *gin.Context) {
 		c.JSON(http.StatusOK, common.KubeConfig{
 			Server:     config.Host,
@@ -48,31 +53,31 @@ func serve(_ *cobra.Command, _ []string) error {
 			ClientKey:  base64.StdEncoding.EncodeToString(config.KeyData),
 		})
 	})
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
 	engine.DELETE("/testenv", func(c *gin.Context) {
-		if err := testEnv.Stop(); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "failed to stop the testenv server",
-			})
-		}
-
-		if err := os.Remove(sock); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "failed to clean up the socket file. please delete \"./daemon.socket\"",
-			})
-		}
-
-		c.JSON(http.StatusOK, gin.H{
-			"message": "stopped",
+		c.JSON(http.StatusAccepted, gin.H{
+			"message": "shutting down the server...",
 		})
 
-		os.Exit(0)
+		quit <- syscall.SIGTERM
 	})
 
-	if err := engine.RunUnix(sock); err != nil {
-		fmt.Print(err)
-		if err := testEnv.Stop(); err != nil {
-			return err
+	go func() {
+		if err := engine.RunUnix(sock); err != nil {
+			fmt.Println(err)
 		}
+	}()
+
+	<-quit
+	log.Println("shutting down the server...")
+
+	if err := testEnv.Stop(); err != nil {
+		return err
+	}
+	if err := os.Remove(sock); err != nil {
 		return err
 	}
 
