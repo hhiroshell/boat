@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"syscall"
 
 	"github.com/gin-gonic/gin"
@@ -15,6 +14,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 
 	"github.com/hhiroshell/kube-boat/pkg/common"
+	"github.com/hhiroshell/kube-boat/pkg/infrastructure/socket"
 )
 
 var serveCmd = &cobra.Command{
@@ -32,11 +32,10 @@ func init() {
 }
 
 func serve(_ *cobra.Command, _ []string) error {
-	home, err := os.UserHomeDir()
+	sock, err := socket.NewSocket()
 	if err != nil {
 		return err
 	}
-	sock := filepath.Join(home, ".kube-boat", "daemon.socket")
 
 	testEnv := &envtest.Environment{}
 	config, err := testEnv.Start()
@@ -66,7 +65,7 @@ func serve(_ *cobra.Command, _ []string) error {
 	})
 
 	go func() {
-		if err := engine.RunUnix(sock); err != nil {
+		if err := engine.RunUnix(sock.Path()); err != nil {
 			fmt.Println(err)
 		}
 	}()
@@ -77,7 +76,7 @@ func serve(_ *cobra.Command, _ []string) error {
 	if err := testEnv.Stop(); err != nil {
 		return err
 	}
-	if err := os.Remove(sock); err != nil {
+	if err := sock.Close(); err != nil {
 		return err
 	}
 

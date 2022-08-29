@@ -6,10 +6,10 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"os"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
+
+	"github.com/hhiroshell/kube-boat/pkg/infrastructure/socket"
 )
 
 var configCmd = &cobra.Command{
@@ -26,7 +26,7 @@ func init() {
 }
 
 func config(_ *cobra.Command, _ []string) error {
-	home, err := os.UserHomeDir()
+	sock, err := socket.NewSocket()
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func config(_ *cobra.Command, _ []string) error {
 	client := http.Client{
 		Transport: &http.Transport{
 			DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
-				return net.Dial("unix", filepath.Join(home, ".kube-boat", "daemon.socket"))
+				return net.Dial("unix", sock.Path())
 			},
 		},
 	}
