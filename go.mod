@@ -5,6 +5,8 @@ go 1.19
 require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/spf13/cobra v1.5.0
+	go.uber.org/multierr v1.8.0
+	golang.org/x/sys v0.0.0-20210806184541-e5e7981a1069
 	sigs.k8s.io/controller-runtime v0.9.0
 )
 
@@ -33,10 +35,10 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
+	go.uber.org/atomic v1.7.0 // indirect
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
 	golang.org/x/net v0.0.0-20210428140749-89ef3d95e781 // indirect
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d // indirect
-	golang.org/x/sys v0.0.0-20210806184541-e5e7981a1069 // indirect
 	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
 	golang.org/x/text v0.3.6 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect

@@ -3,12 +3,11 @@ package daemon
 import (
 	"context"
 	"encoding/base64"
-	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"k8s.io/client-go/rest"
+	"go.uber.org/multierr"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 
 	"github.com/hhiroshell/kube-boat/pkg/common"
@@ -20,8 +19,6 @@ type Daemon struct {
 
 	sock    *socket.Socket
 	testEnv *envtest.Environment
-
-	config *rest.Config
 }
 
 func NewDaemon(sock *socket.Socket, testEnv *envtest.Environment) *Daemon {
@@ -31,54 +28,53 @@ func NewDaemon(sock *socket.Socket, testEnv *envtest.Environment) *Daemon {
 	}
 }
 
-func (d *Daemon) Run(ctx context.Context) error {
+func (d *Daemon) Run(ctx context.Context, cancel context.CancelFunc) error {
 	config, err := d.testEnv.Start()
 	if err != nil {
 		return err
 	}
-	d.config = config
 
 	engine := gin.Default()
-	engine.GET("/kube-boat", d.kubeConfig)
-	engine.DELETE("/kube-boat", d.shutdown)
+	engine.GET("/kube-boat", func(c *gin.Context) {
+		c.JSON(http.StatusOK, common.KubeConfig{
+			Server:     config.Host,
+			ClientCert: base64.StdEncoding.EncodeToString(config.CertData),
+			ClientKey:  base64.StdEncoding.EncodeToString(config.KeyData),
+		})
+	})
+	engine.DELETE("/kube-boat", func(c *gin.Context) {
+		c.JSON(http.StatusAccepted, gin.H{
+			"message": "shutting down the server...",
+		})
+		cancel()
+	})
 
 	go func() {
 		if err := engine.RunUnix(d.sock.Path()); err != nil {
-			fmt.Println(err)
-			d.clean()
+			log.Println("failed to start the daemon: %w", err)
 
-			log.Fatalf("")
+			cancel()
 		}
 	}()
 
 	<-ctx.Done()
-	log.Println("shutting down the server...")
-	d.clean()
+	log.Println("shutting down the daemon...")
+	if err := d.clean(); err != nil {
+		return err
+	}
 
 	return nil
 }
 
-func (d *Daemon) kubeConfig(c *gin.Context) {
-	c.JSON(http.StatusOK, common.KubeConfig{
-		Server:     d.config.Host,
-		ClientCert: base64.StdEncoding.EncodeToString(d.config.CertData),
-		ClientKey:  base64.StdEncoding.EncodeToString(d.config.KeyData),
-	})
-}
+func (d *Daemon) clean() error {
+	var errors error
 
-func (d *Daemon) shutdown(c *gin.Context) {
-	c.JSON(http.StatusAccepted, gin.H{
-		"message": "shutting down the server...",
-	})
-
-	d.ctx.Done()
-}
-
-func (d *Daemon) clean() {
 	if err := d.testEnv.Stop(); err != nil {
-		fmt.Println(err)
+		multierr.Append(errors, err)
 	}
 	if err := d.sock.Close(); err != nil {
-		fmt.Println(err)
+		multierr.Append(errors, err)
 	}
+
+	return errors
 }

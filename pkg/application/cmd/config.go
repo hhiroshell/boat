@@ -39,7 +39,7 @@ func config(_ *cobra.Command, _ []string) error {
 		},
 	}
 
-	res, err := client.Get("http://localhost/testenv")
+	res, err := client.Get("http://localhost/kube-boat")
 	if err != nil {
 		return err
 	}
