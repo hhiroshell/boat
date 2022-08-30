@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/hhiroshell/kube-boat/pkg/cmd"
+	"github.com/hhiroshell/kube-boat/cmd"
 )
 
 func main() {

@@ -3,8 +3,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/hhiroshell/kube-boat/pkg/daemon"
-	"github.com/hhiroshell/kube-boat/pkg/kubectl"
+	"github.com/hhiroshell/kube-boat/daemon"
+	"github.com/hhiroshell/kube-boat/kubectl"
 )
 
 var configCmd = &cobra.Command{
