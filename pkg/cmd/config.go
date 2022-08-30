@@ -9,12 +9,10 @@ import (
 )
 
 var configCmd = &cobra.Command{
-	Use:           "config",
-	Short:         "",
-	Long:          ``,
-	SilenceErrors: true,
-	SilenceUsage:  true,
-	RunE:          config,
+	Use:   "config",
+	Short: "Update kubectl context to use API Server started by kube-boat.",
+	Long:  `Update kubectl context to use API Server started by kube-boat.`,
+	RunE:  config,
 }
 
 func init() {

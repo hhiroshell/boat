@@ -12,13 +12,14 @@ import (
 )
 
 var serveCmd = &cobra.Command{
-	Use:           "serve",
-	Short:         "Start a standalone, local Kubernetes api server.",
-	Long:          `Start a standalone, local Kubernetes api server.`,
-	Hidden:        true,
-	SilenceErrors: true,
-	SilenceUsage:  true,
-	RunE:          serve,
+	Use:   "serve",
+	Short: "Start local Kubernetes API server.",
+	Long: `Start local Kubernetes API server and also resides as a daemon
+that receives requests from other kube-boat commands.
+You should not execute this command directly. It is intended to
+be called via the kube-boat start command.`,
+	Hidden: true,
+	RunE:   serve,
 }
 
 func init() {
@@ -31,11 +32,14 @@ func serve(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
+	// TODO: add flags to specify envtest options
 	testEnv := &envtest.Environment{}
 
 	ctx, cancel := signal.NotifyContext(context.Background(), unix.SIGINT, unix.SIGTERM, unix.SIGHUP)
 
-	daemon.NewDaemon(sock, testEnv).Run(ctx, cancel)
+	if err := daemon.NewDaemon(sock, testEnv).Run(ctx, cancel); err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -2,18 +2,17 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
 
 	"github.com/hhiroshell/kube-boat/pkg/daemon"
 )
 
 var stopCmd = &cobra.Command{
-	Use:           "stop",
-	Short:         "",
-	Long:          ``,
-	SilenceErrors: true,
-	SilenceUsage:  true,
-	RunE:          stop,
+	Use:   "stop",
+	Short: "Stop the running local Kubernetes API server",
+	Long:  `Stop the running local Kubernetes API server`,
+	RunE:  stop,
 }
 
 func init() {

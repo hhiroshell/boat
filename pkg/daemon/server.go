@@ -49,7 +49,7 @@ func (d *Daemon) Run(ctx context.Context, cancel context.CancelFunc) error {
 
 	go func() {
 		if err := engine.RunUnix(d.sock.Path()); err != nil {
-			log.Println("failed to start the daemon: %w", err)
+			log.Printf("failed to start the daemon: %s", err.Error())
 
 			cancel()
 		}

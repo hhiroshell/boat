@@ -8,12 +8,10 @@ import (
 )
 
 var startCmd = &cobra.Command{
-	Use:           "start",
-	Short:         "",
-	Long:          ``,
-	SilenceErrors: true,
-	SilenceUsage:  true,
-	RunE:          start,
+	Use:   "start",
+	Short: "Start local Kubernetes API server",
+	Long:  `Start local Kubernetes API server`,
+	RunE:  start,
 }
 
 func init() {
@@ -21,11 +19,11 @@ func init() {
 }
 
 func start(_ *cobra.Command, _ []string) error {
-	cmd := exec.Command("./boat", "serve")
+	cmd := exec.Command("boat", "serve")
 	if err := cmd.Start(); err != nil {
 		return err
 	}
-	fmt.Println("starting kube api server...")
+	fmt.Println("Starting local Kubernetes API server...")
 
 	// TODO: wait for the daemon become running
 	return nil
