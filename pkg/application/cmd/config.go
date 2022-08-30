@@ -1,15 +1,11 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
-	"io"
-	"net"
-	"net/http"
-
 	"github.com/spf13/cobra"
+	"io"
 
-	"github.com/hhiroshell/kube-boat/pkg/infrastructure/socket"
+	"github.com/hhiroshell/kube-boat/pkg/infrastructure/client"
 )
 
 var configCmd = &cobra.Command{
@@ -26,20 +22,12 @@ func init() {
 }
 
 func config(_ *cobra.Command, _ []string) error {
-	sock, err := socket.NewSocket()
+	c, err := client.NewSocketClient()
 	if err != nil {
 		return err
 	}
 
-	client := http.Client{
-		Transport: &http.Transport{
-			DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
-				return net.Dial("unix", sock.Path())
-			},
-		},
-	}
-
-	res, err := client.Get("http://localhost/kube-boat")
+	res, err := c.Get("http://localhost/kube-boat")
 	if err != nil {
 		return err
 	}

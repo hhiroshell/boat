@@ -1,4 +1,4 @@
-package common
+package model
 
 type KubeConfig struct {
 	Server     string `json:"server"`
