@@ -37,6 +37,9 @@ func config(_ *cobra.Command, _ []string) error {
 	if err := kubectl.SetUser(kubeconfig.ClientCert, kubeconfig.ClientKey); err != nil {
 		return err
 	}
+	if err := kubectl.SetContext(true); err != nil {
+		return err
+	}
 
 	fmt.Println(kubeconfig)
 	return nil
