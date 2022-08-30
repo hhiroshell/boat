@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/hhiroshell/kube-boat/pkg/daemon"
+	"github.com/hhiroshell/kube-boat/pkg/kubectl"
 )
 
 var configCmd = &cobra.Command{
@@ -30,7 +31,13 @@ func config(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	fmt.Println(kubeconfig)
+	if err := kubectl.SetCluster(kubeconfig.Server); err != nil {
+		return err
+	}
+	if err := kubectl.SetUser(kubeconfig.ClientCert, kubeconfig.ClientKey); err != nil {
+		return err
+	}
 
+	fmt.Println(kubeconfig)
 	return nil
 }
