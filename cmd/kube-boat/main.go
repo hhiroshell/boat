@@ -1,6 +1,8 @@
 package main
 
-import "github.com/hhiroshell/kube-boat/pkg/application/cmd"
+import (
+	"github.com/hhiroshell/kube-boat/pkg/cmd"
+)
 
 func main() {
 	cmd.Execute()

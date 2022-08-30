@@ -9,19 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/multierr"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
-
-	"github.com/hhiroshell/kube-boat/pkg/common"
-	"github.com/hhiroshell/kube-boat/pkg/infrastructure/socket"
 )
 
 type Daemon struct {
 	ctx context.Context
 
-	sock    *socket.Socket
+	sock    *Socket
 	testEnv *envtest.Environment
 }
 
-func NewDaemon(sock *socket.Socket, testEnv *envtest.Environment) *Daemon {
+func NewDaemon(sock *Socket, testEnv *envtest.Environment) *Daemon {
 	return &Daemon{
 		sock:    sock,
 		testEnv: testEnv,
@@ -36,7 +33,7 @@ func (d *Daemon) Run(ctx context.Context, cancel context.CancelFunc) error {
 
 	engine := gin.Default()
 	engine.GET("/kube-boat", func(c *gin.Context) {
-		c.JSON(http.StatusOK, common.KubeConfig{
+		c.JSON(http.StatusOK, KubeConfig{
 			Server:     config.Host,
 			ClientCert: base64.StdEncoding.EncodeToString(config.CertData),
 			ClientKey:  base64.StdEncoding.EncodeToString(config.KeyData),
@@ -46,6 +43,7 @@ func (d *Daemon) Run(ctx context.Context, cancel context.CancelFunc) error {
 		c.JSON(http.StatusAccepted, gin.H{
 			"message": "shutting down the server...",
 		})
+
 		cancel()
 	})
 

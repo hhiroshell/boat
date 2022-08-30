@@ -1,15 +1,13 @@
-package client
+package daemon
 
 import (
 	"context"
 	"net"
 	"net/http"
-
-	"github.com/hhiroshell/kube-boat/pkg/infrastructure/socket"
 )
 
 func NewSocketClient() (*http.Client, error) {
-	sock, err := socket.NewSocket()
+	sock, err := NewSocket()
 	if err != nil {
 		return nil, err
 	}

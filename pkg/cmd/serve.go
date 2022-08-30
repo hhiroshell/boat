@@ -8,8 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 
-	"github.com/hhiroshell/kube-boat/pkg/application/daemon"
-	"github.com/hhiroshell/kube-boat/pkg/infrastructure/socket"
+	"github.com/hhiroshell/kube-boat/pkg/daemon"
 )
 
 var serveCmd = &cobra.Command{
@@ -27,7 +26,7 @@ func init() {
 }
 
 func serve(_ *cobra.Command, _ []string) error {
-	sock, err := socket.NewSocket()
+	sock, err := daemon.NewSocket()
 	if err != nil {
 		return err
 	}

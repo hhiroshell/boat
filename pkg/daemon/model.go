@@ -1,4 +1,4 @@
-package model
+package daemon
 
 type KubeConfig struct {
 	Server     string `json:"server"`

@@ -22,7 +22,6 @@ func init() {
 
 func start(_ *cobra.Command, _ []string) error {
 	cmd := exec.Command("./boat", "serve")
-
 	if err := cmd.Start(); err != nil {
 		return err
 	}

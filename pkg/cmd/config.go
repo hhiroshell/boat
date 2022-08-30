@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 	"io"
 
-	"github.com/hhiroshell/kube-boat/pkg/infrastructure/client"
+	"github.com/hhiroshell/kube-boat/pkg/daemon"
 )
 
 var configCmd = &cobra.Command{
@@ -22,7 +22,7 @@ func init() {
 }
 
 func config(_ *cobra.Command, _ []string) error {
-	c, err := client.NewSocketClient()
+	c, err := daemon.NewSocketClient()
 	if err != nil {
 		return err
 	}
