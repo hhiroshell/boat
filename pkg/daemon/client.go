@@ -58,3 +58,27 @@ func (c *Client) Kubeconfig() (*Kubeconfig, error) {
 
 	return kubeconfig, nil
 }
+
+func (c *Client) StopDaemon() (string, error) {
+	req, err := http.NewRequest(http.MethodDelete, "http://localhost/kube-boat", nil)
+	if err != nil {
+		return "", err
+	}
+
+	res, err := c.client.Do(req)
+	if err != nil {
+		return "", err
+	}
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return "", err
+	}
+
+	msg := &Message{}
+	if err := json.Unmarshal(body, msg); err != nil {
+		return "", fmt.Errorf("failed to Unmarshal response from the kube-boat daemon: %w", err)
+	}
+
+	return msg.Message, nil
+}
