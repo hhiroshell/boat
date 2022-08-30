@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
-	"io"
 
 	"github.com/hhiroshell/kube-boat/pkg/daemon"
 )
@@ -22,24 +22,17 @@ func init() {
 }
 
 func config(_ *cobra.Command, _ []string) error {
-	c, err := daemon.NewSocketClient()
+	client, err := daemon.NewClient()
 	if err != nil {
 		return err
 	}
 
-	res, err := c.Get("http://localhost/kube-boat")
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
+	kubeconfig, err := client.Kubeconfig()
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(res.Status)
-	fmt.Println(string(body))
+	fmt.Println(kubeconfig)
 
 	return nil
 }

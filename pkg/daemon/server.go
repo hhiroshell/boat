@@ -33,7 +33,7 @@ func (d *Daemon) Run(ctx context.Context, cancel context.CancelFunc) error {
 
 	engine := gin.Default()
 	engine.GET("/kube-boat", func(c *gin.Context) {
-		c.JSON(http.StatusOK, KubeConfig{
+		c.JSON(http.StatusOK, Kubeconfig{
 			Server:     config.Host,
 			ClientCert: base64.StdEncoding.EncodeToString(config.CertData),
 			ClientKey:  base64.StdEncoding.EncodeToString(config.KeyData),
