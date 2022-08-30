@@ -2,7 +2,6 @@ package kubectl
 
 import (
 	"os/exec"
-	"strconv"
 )
 
 func SetUser(cert, key string) error {
@@ -28,17 +27,25 @@ func SetCluster(server string) error {
 	return nil
 }
 
-func SetContext(current bool) error {
+func SetContext(use bool) error {
 	args := []string{
 		"config",
 		"set-context",
+		"kube-boat",
 		"--cluster=kube-boat",
 		"--user=kube-boat",
-		"--current=" + strconv.FormatBool(current),
+		"--namespace=default",
 	}
 	cmd := exec.Command("kubectl", args...)
 	if err := cmd.Run(); err != nil {
 		return err
+	}
+
+	if use {
+		cmd := exec.Command("kubectl", "config", "use-context", "kube-boat")
+		if err := cmd.Run(); err != nil {
+			return err
+		}
 	}
 
 	return nil
