@@ -32,12 +32,24 @@ var _ = Describe("Client", func() {
 				Expect(kubeconfig.ClientKey).To(Equal("Y2xpZW50LWtleS1kYXRhCg=="))
 			})
 		})
+
+		When("the kube-boat daemon is not running", func() {
+			It("ends up with error", func() {
+				// do not register responder to emulate that the kube-boat daemon is not running
+
+				client := &Client{client: &http.Client{}}
+				kubeconfig, err := client.Kubeconfig()
+
+				Expect(err).To(HaveOccurred())
+				Expect(kubeconfig).To(BeNil())
+			})
+		})
 	})
 
 	Describe("func StopDaemon()", func() {
 		When("the kube-boat daemon returns accepting response", func() {
 			var response = `{
-    "message": "shutting down the server..."
+    "message": "shutting down the API server..."
 }`
 			It("should return a correctly unmarshalled result", func() {
 				httpmock.RegisterResponder(
@@ -50,7 +62,19 @@ var _ = Describe("Client", func() {
 				msg, err := client.StopDaemon()
 
 				Expect(err).NotTo(HaveOccurred())
-				Expect(msg).To(Equal("shutting down the server..."))
+				Expect(msg).To(Equal("shutting down the API server..."))
+			})
+		})
+
+		When("the kube-boat daemon is not running", func() {
+			It("ends up with error", func() {
+				// do not register responder to emulate that the kube-boat daemon is not running
+
+				client := &Client{client: &http.Client{}}
+				msg, err := client.StopDaemon()
+
+				Expect(err).To(HaveOccurred())
+				Expect(msg).To(BeEmpty())
 			})
 		})
 	})

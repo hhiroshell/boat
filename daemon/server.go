@@ -38,8 +38,8 @@ func (d *Daemon) Run(ctx context.Context, cancel context.CancelFunc) error {
 		})
 	})
 	engine.DELETE("/kube-boat", func(c *gin.Context) {
-		c.JSON(http.StatusAccepted, gin.H{
-			"message": "shutting down the server...",
+		c.JSON(http.StatusAccepted, Message{
+			Message: "shutting down the API server...",
 		})
 
 		cancel()
