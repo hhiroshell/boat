@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 
-	"github.com/hhiroshell/kube-boat/pkg/daemon"
+	"github.com/hhiroshell/kube-boat/daemon"
 )
 
 var serveCmd = &cobra.Command{

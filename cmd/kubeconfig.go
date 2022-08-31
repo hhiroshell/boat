@@ -1,16 +1,14 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
-	"github.com/hhiroshell/kube-boat/pkg/daemon"
-	"github.com/hhiroshell/kube-boat/pkg/kubectl"
+	"github.com/hhiroshell/kube-boat/daemon"
+	"github.com/hhiroshell/kube-boat/kubectl"
 )
 
 var configCmd = &cobra.Command{
-	Use:   "config",
+	Use:   "kubeconfig",
 	Short: "Update kubectl context to use API Server started by kube-boat.",
 	Long:  `Update kubectl context to use API Server started by kube-boat.`,
 	RunE:  config,
@@ -41,6 +39,5 @@ func config(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	fmt.Println(kubeconfig)
 	return nil
 }
