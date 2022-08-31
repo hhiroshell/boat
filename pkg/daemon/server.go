@@ -12,8 +12,6 @@ import (
 )
 
 type Daemon struct {
-	ctx context.Context
-
 	sock    *Socket
 	testEnv *envtest.Environment
 }
