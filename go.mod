@@ -4,9 +4,12 @@ go 1.19
 
 require (
 	github.com/gin-gonic/gin v1.8.1
+	github.com/jarcoal/httpmock v1.2.0
+	github.com/onsi/ginkgo/v2 v2.1.4
+	github.com/onsi/gomega v1.19.0
 	github.com/spf13/cobra v1.5.0
 	go.uber.org/multierr v1.8.0
-	golang.org/x/sys v0.0.0-20210806184541-e5e7981a1069
+	golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8
 	sigs.k8s.io/controller-runtime v0.9.0
 )
 
@@ -37,10 +40,10 @@ require (
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
-	golang.org/x/net v0.0.0-20210428140749-89ef3d95e781 // indirect
+	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d // indirect
-	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
-	golang.org/x/text v0.3.6 // indirect
+	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
+	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
