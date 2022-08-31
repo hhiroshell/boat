@@ -11,7 +11,7 @@ import (
 func TestSuite(t *testing.T) {
 	RegisterFailHandler(Fail)
 
-	RunSpecs(t, "kube-boat client suite")
+	RunSpecs(t, "kube-boat daemon suite")
 }
 
 var _ = BeforeSuite(func() {
