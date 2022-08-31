@@ -29,13 +29,7 @@ func config(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	if err := kubectl.SetCluster(kubeconfig.Server); err != nil {
-		return err
-	}
-	if err := kubectl.SetUser(kubeconfig.ClientCert, kubeconfig.ClientKey); err != nil {
-		return err
-	}
-	if err := kubectl.SetContext(true); err != nil {
+	if err := kubectl.SetContext(kubeconfig.Server, kubeconfig.ClientCert, kubeconfig.ClientKey, true); err != nil {
 		return err
 	}
 

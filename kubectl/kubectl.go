@@ -4,7 +4,7 @@ import (
 	"os/exec"
 )
 
-func SetUser(cert, key string) error {
+func SetContext(server, cert, key string, use bool) error {
 	setCertCmd := exec.Command(
 		"kubectl",
 		"config",
@@ -25,11 +25,7 @@ func SetUser(cert, key string) error {
 		return err
 	}
 
-	return nil
-}
-
-func SetCluster(server string) error {
-	cmd := exec.Command(
+	setClusterCmd := exec.Command(
 		"kubectl",
 		"config",
 		"set-cluster",
@@ -37,15 +33,11 @@ func SetCluster(server string) error {
 		"--server="+server,
 		"--insecure-skip-tls-verify=true",
 	)
-	if err := cmd.Run(); err != nil {
+	if err := setClusterCmd.Run(); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-func SetContext(use bool) error {
-	cmd := exec.Command(
+	setContextCommand := exec.Command(
 		"kubectl",
 		"config",
 		"set-context",
@@ -54,16 +46,20 @@ func SetContext(use bool) error {
 		"--user=kube-boat",
 		"--namespace=default",
 	)
-	if err := cmd.Run(); err != nil {
+	if err := setContextCommand.Run(); err != nil {
 		return err
 	}
 
 	if use {
-		cmd := exec.Command("kubectl", "config", "use-context", "kube-boat")
-		if err := cmd.Run(); err != nil {
+		useContextCmd := exec.Command(
+			"kubectl",
+			"config",
+			"use-context",
+			"kube-boat",
+		)
+		if err := useContextCmd.Run(); err != nil {
 			return err
 		}
 	}
-
 	return nil
 }
