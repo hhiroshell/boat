@@ -9,6 +9,10 @@ import (
 )
 
 var _ = Describe("Client", func() {
+	BeforeEach(func() {
+		httpmock.Reset()
+	})
+
 	Describe("func Kubeconfig()", func() {
 		When("the kube-boat daemon returns correct kubeconfig response", func() {
 			var response = `{
