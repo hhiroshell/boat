@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"context"
-	"golang.org/x/sys/unix"
 	"os/signal"
 
 	"github.com/spf13/cobra"
+	"golang.org/x/sys/unix"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 
 	"github.com/hhiroshell/kube-boat/daemon"
