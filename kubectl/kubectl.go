@@ -61,5 +61,6 @@ func SetContext(server, cert, key string, use bool) error {
 			return err
 		}
 	}
+
 	return nil
 }
