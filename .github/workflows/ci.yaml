@@ -18,19 +18,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - uses: actions/setup-go@v2
         with:
           go-version: 1.19.x
+
+      - name: Install envtest binalies
+        env:
+          KUBEBUILDER_ASSETS_VERSION: 1.24.x
+        run: |
+          go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+          setup-envtest use $KUBEBUILDER_ASSETS_VERSION
+          source <(setup-envtest use -i -p env)
+
       - name: Ensure go.mod is already tidied
         run: go mod tidy && git diff -s --exit-code go.sum
+
       - uses: actions/cache@v2
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+
       - run: "go test ./..."
+
       - run: "go vet ./..."
+
       - uses: dominikh/staticcheck-action@v1.2.0
         with:
           version: "2022.1.1"
