@@ -35,6 +35,9 @@ Your kubectl context can be updated by `kubeconfig` sub command.
 ```console
 $ kube-boat kubeconfig
 
+$ kubectl config current-context
+kube-boat
+
 $ kubectl get namespaces
 NAME              STATUS   AGE
 default           Active   22s
