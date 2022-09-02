@@ -10,6 +10,8 @@ require (
 	github.com/spf13/cobra v1.5.0
 	go.uber.org/multierr v1.8.0
 	golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8
+	k8s.io/api v0.21.1
+	k8s.io/client-go v0.21.1
 	sigs.k8s.io/controller-runtime v0.9.0
 )
 
@@ -50,10 +52,8 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
-	k8s.io/api v0.21.1 // indirect
 	k8s.io/apiextensions-apiserver v0.21.1 // indirect
 	k8s.io/apimachinery v0.21.1 // indirect
-	k8s.io/client-go v0.21.1 // indirect
 	k8s.io/klog/v2 v2.8.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20210305001622-591a79e4bda7 // indirect
 	k8s.io/utils v0.0.0-20210527160623-6fdb442a123b // indirect
