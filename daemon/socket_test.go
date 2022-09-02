@@ -32,7 +32,7 @@ var _ = Describe("Socket", func() {
 		})
 	})
 
-	Describe("func Close()", func() {
+	Describe("func Close()", Ordered, func() {
 		When("the kube-boat socket is not exist", func() {
 			It("ends up with error", func() {
 				err := sock.Close()
