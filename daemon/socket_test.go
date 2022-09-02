@@ -32,14 +32,14 @@ var _ = Describe("Socket", func() {
 		})
 	})
 
-	Describe("func Close()", Ordered, func() {
-		//When("the kube-boat socket is not exist", func() {
-		//	It("ends up with error", func() {
-		//		err := sock.Close()
-		//		Expect(err).To(HaveOccurred())
-		//		Expect(err.Error()).Should(HavePrefix("failed remove unix socket file: "))
-		//	})
-		//})
+	Describe("func Close()", func() {
+		When("the kube-boat socket is not exist", func() {
+			It("ends up with error", func() {
+				err := sock.Close()
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).Should(HavePrefix("failed remove unix socket file: "))
+			})
+		})
 
 		When("the kube-boat socket exists", func() {
 			It("removes the socket", func() {

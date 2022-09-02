@@ -16,7 +16,12 @@ func NewSocket() (*Socket, error) {
 		return nil, fmt.Errorf("failed to get file path of unix socket: %w", err)
 	}
 
-	path := filepath.Join(home, ".kube-boat", "daemon.socket")
+	dir := filepath.Join(home, ".kube-boat")
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		os.Mkdir(dir, 0700)
+	}
+
+	path := filepath.Join(dir, "daemon.socket")
 
 	return &Socket{path: path}, nil
 }
