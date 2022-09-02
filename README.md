@@ -2,7 +2,7 @@
 ===
 ![ci](https://github.com/hhiroshell/kube-boat/actions/workflows/ci.yaml/badge.svg)
 
-Local and standalone Kubernetes API Servver, always by your side.
+Local and standalone Kubernetes API Server, always by your side.
 
 
 Setup
