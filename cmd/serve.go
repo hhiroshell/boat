@@ -8,7 +8,7 @@ import (
 	"golang.org/x/sys/unix"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 
-	"github.com/hhiroshell/kube-boat/daemon"
+	"github.com/hhiroshell/boat/daemon"
 )
 
 var serveCmd = &cobra.Command{

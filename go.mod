@@ -1,4 +1,4 @@
-module github.com/hhiroshell/kube-boat
+module github.com/hhiroshell/boat
 
 go 1.19
 

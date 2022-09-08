@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/hhiroshell/kube-boat/daemon"
+	"github.com/hhiroshell/boat/daemon"
 )
 
 var stopCmd = &cobra.Command{
