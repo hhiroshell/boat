@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/spf13/cobra"
@@ -19,7 +20,12 @@ func init() {
 }
 
 func start(_ *cobra.Command, _ []string) error {
-	cmd := exec.Command("kube-boat", "serve")
+	boat, err := os.Executable()
+	if err != nil {
+		return err
+	}
+
+	cmd := exec.Command(boat, "serve")
 	if err := cmd.Start(); err != nil {
 		return err
 	}
