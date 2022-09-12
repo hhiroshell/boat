@@ -40,7 +40,8 @@ func start(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
 
@@ -56,6 +57,4 @@ func start(_ *cobra.Command, _ []string) error {
 			}
 		}
 	}
-
-	return nil
 }
