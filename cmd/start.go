@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -48,7 +49,8 @@ func start(_ *cobra.Command, _ []string) error {
 	for {
 		select {
 		case <-ctx.Done():
-			fmt.Print("time out")
+			fmt.Println()
+			return errors.New("failed to start kube-boat daemon or Kubernetes API Server before timed out")
 		case <-ticker.C:
 			fmt.Print(" 🚤")
 			if err := client.Readyz(); err == nil {
