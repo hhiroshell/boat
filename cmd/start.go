@@ -1,11 +1,15 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/spf13/cobra"
+
+	"github.com/hhiroshell/boat/daemon"
 )
 
 var startCmd = &cobra.Command{
@@ -31,6 +35,26 @@ func start(_ *cobra.Command, _ []string) error {
 	}
 	fmt.Println("Starting local Kubernetes API server...")
 
-	// TODO: wait for the daemon become running
-	return nil
+	client, err := daemon.NewClient()
+	if err != nil {
+		return err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			fmt.Print("time out")
+		case <-ticker.C:
+			fmt.Print(" 🚤")
+			if err := client.Readyz(); err == nil {
+				fmt.Println("\n...Done.")
+				return nil
+			}
+		}
+	}
 }

@@ -39,8 +39,26 @@ func newSocketClient() (*http.Client, error) {
 	return client, nil
 }
 
+func (c *Client) Readyz() error {
+	res, err := c.client.Get("http://localhost" + readyz)
+	if err != nil {
+		return fmt.Errorf("kube-boat daemon or local Kubernetes API Server is not ready: %w", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode == http.StatusOK {
+		return nil
+	} else {
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			return fmt.Errorf("kube-boat daemon or local Kubernetes API Server is not ready: %w", err)
+		}
+		return fmt.Errorf("kube-boat daemon or local Kubernetes API Server is not ready: %s", string(body))
+	}
+}
+
 func (c *Client) Kubeconfig() (*Kubeconfig, error) {
-	res, err := c.client.Get("http://localhost/kube-boat")
+	res, err := c.client.Get("http://localhost" + kubeconfig)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +78,7 @@ func (c *Client) Kubeconfig() (*Kubeconfig, error) {
 }
 
 func (c *Client) StopDaemon() (string, error) {
-	req, err := http.NewRequest(http.MethodDelete, "http://localhost/kube-boat", nil)
+	req, err := http.NewRequest(http.MethodDelete, "http://localhost"+base, nil)
 	if err != nil {
 		return "", err
 	}

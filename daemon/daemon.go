@@ -2,6 +2,7 @@ package daemon
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/base64"
 	"log"
 	"net/http"
@@ -23,21 +24,49 @@ func NewDaemon(sock *Socket, testEnv *envtest.Environment) *Daemon {
 	}
 }
 
+const (
+	base       = "/kube-boat"
+	readyz     = base + "/readyz"
+	kubeconfig = base + "/kubeconfig"
+)
+
 func (d *Daemon) Run(ctx context.Context, cancel context.CancelFunc) error {
 	config, err := d.testEnv.Start()
 	if err != nil {
 		return err
 	}
 
+	cert := base64.StdEncoding.EncodeToString(config.CertData)
+	key := base64.StdEncoding.EncodeToString(config.KeyData)
+
 	engine := gin.Default()
-	engine.GET("/kube-boat", func(c *gin.Context) {
+	engine.GET(readyz, func(c *gin.Context) {
+		client := http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			},
+		}
+		res, err := client.Get(config.Host + "readyz")
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, "ng")
+			return
+		}
+		defer res.Body.Close()
+
+		if res.StatusCode == http.StatusOK {
+			c.JSON(http.StatusOK, "ok")
+		} else {
+			c.JSON(http.StatusInternalServerError, "ng")
+		}
+	})
+	engine.GET(kubeconfig, func(c *gin.Context) {
 		c.JSON(http.StatusOK, Kubeconfig{
 			Server:     config.Host,
-			ClientCert: base64.StdEncoding.EncodeToString(config.CertData),
-			ClientKey:  base64.StdEncoding.EncodeToString(config.KeyData),
+			ClientCert: cert,
+			ClientKey:  key,
 		})
 	})
-	engine.DELETE("/kube-boat", func(c *gin.Context) {
+	engine.DELETE(base, func(c *gin.Context) {
 		c.JSON(http.StatusAccepted, Message{
 			Message: "shutting down the API server...",
 		})

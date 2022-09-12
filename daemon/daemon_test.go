@@ -91,11 +91,21 @@ var _ = Describe("Daemon", func() {
 				}, 15, 1).Should(Succeed())
 			})
 
+			It("makes kube-boat's \"readyz\" endpoint available", func() {
+				var res *http.Response
+				Eventually(func() error {
+					var err error
+					res, err = daemonClient.Get("http://localhost" + readyz)
+					return err
+				}, 15, 1).Should(Succeed())
+				defer res.Body.Close()
+			})
+
 			It("makes kube-boat's \"kubeconfig\" endpoint available", func() {
 				var res *http.Response
 				Eventually(func() error {
 					var err error
-					res, err = daemonClient.Get("http://localhost/kube-boat")
+					res, err = daemonClient.Get("http://localhost" + kubeconfig)
 					return err
 				}, 15, 1).Should(Succeed())
 				defer res.Body.Close()
@@ -113,7 +123,7 @@ var _ = Describe("Daemon", func() {
 			})
 
 			It("makes kube-boat's shutdown endpoint available", func() {
-				req, err := http.NewRequest(http.MethodDelete, "http://localhost/kube-boat", nil)
+				req, err := http.NewRequest(http.MethodDelete, "http://localhost"+base, nil)
 				Expect(err).NotTo(HaveOccurred())
 
 				res, err := daemonClient.Do(req)
