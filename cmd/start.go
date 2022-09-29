@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"syscall"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -25,6 +26,20 @@ func init() {
 }
 
 func start(_ *cobra.Command, _ []string) error {
+	client, err := daemon.NewClient()
+	if err != nil {
+		return err
+	}
+
+	err = client.Readyz()
+	if err == nil {
+		return errors.New("local Kubernetes API Server is already running")
+	}
+	var errno syscall.Errno
+	if !errors.As(err, &errno) {
+		return errors.New("local Kubernetes API Server is already running and is in an unhealthy state")
+	}
+
 	boat, err := os.Executable()
 	if err != nil {
 		return err
@@ -35,11 +50,6 @@ func start(_ *cobra.Command, _ []string) error {
 		return err
 	}
 	fmt.Println("Starting local Kubernetes API server...")
-
-	client, err := daemon.NewClient()
-	if err != nil {
-		return err
-	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
