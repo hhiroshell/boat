@@ -42,20 +42,20 @@ func status(_ *cobra.Command, _ []string) error {
 		}
 	}()
 
-	if err := client.Readyz(); err != nil {
-		var errno syscall.Errno
-		if errors.As(err, &errno) {
-			// kube-boat daemon and Kube API Server are not yet running.
-			return nil
-		} else {
-			// Readyz endpoint of Kube API Server returned some unhealthy status.
-			status[boatd] = "✅ Running"
-			status[kubeapi] = "⚠️ Unhealthy"
-			return nil
-		}
+	err = client.Readyz()
+	if err == nil {
+		status[boatd] = "✅ Running"
+		status[kubeapi] = "✅ Running"
+		return nil
 	}
 
-	status[boatd] = "✅ Running"
-	status[kubeapi] = "✅ Running"
+	var errno syscall.Errno
+	if !errors.As(err, &errno) {
+		// Readyz endpoint of Kube API Server returned some unhealthy status.
+		status[boatd] = "✅ Running"
+		status[kubeapi] = "⚠️ Unhealthy"
+		return nil
+	}
+
 	return nil
 }
