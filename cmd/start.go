@@ -23,6 +23,8 @@ var startCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(startCmd)
+
+	setServeFlags(startCmd)
 }
 
 func start(_ *cobra.Command, _ []string) error {
@@ -45,8 +47,13 @@ func start(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	cmd := exec.Command(boat, "serve")
-	if err := cmd.Start(); err != nil {
+	serveOptions := []string{"serve"}
+	for _, path := range crdPaths {
+		serveOptions = append(serveOptions, "--"+crdPathFlag+"="+path)
+	}
+
+	serve := exec.Command(boat, serveOptions...)
+	if err := serve.Start(); err != nil {
 		return err
 	}
 	fmt.Println("Starting local Kubernetes API server...")
