@@ -67,8 +67,8 @@ CustomResourceDefinition with `--crd-path` flag.
 
 With this flag, the API Server will start with the CRDs installed.
 
-```conolse
-$ start --crd-path=./example/crd/crontabs.stable.example.com.yaml
+```console
+$ boat start --crd-path=./example/crd/crontabs.stable.example.com.yaml
 
 $ kubectl api-resources --api-group=stable.example.com
 NAME       SHORTNAMES   APIVERSION              NAMESPACED   KIND
