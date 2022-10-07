@@ -24,6 +24,8 @@ be called via the kube-boat start command.`,
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
+
+	setServeFlags(serveCmd)
 }
 
 func serve(_ *cobra.Command, _ []string) error {
@@ -32,8 +34,11 @@ func serve(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	// TODO: add flags to specify envtest options
-	testEnv := &envtest.Environment{}
+	testEnv := &envtest.Environment{
+		CRDInstallOptions: envtest.CRDInstallOptions{
+			Paths: crdPaths,
+		},
+	}
 
 	ctx, cancel := signal.NotifyContext(context.Background(), unix.SIGINT, unix.SIGTERM, unix.SIGHUP)
 
