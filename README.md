@@ -22,9 +22,9 @@ $ go install github.com/hhiroshell/kube-boat@latest
 
 Quick Start
 ---
-Make sure [environment variables for Envtest Binaries](https://book.kubebuilder.io/reference/envtest.html#environment-variables)
+Make sure [environment variables of Envtest framework](https://book.kubebuilder.io/reference/envtest.html#environment-variables)
 has been set appropriately.
-Kube Boat executes Kubernetes API Server using Envtest framework. So these variables affects to behavior of the Server.
+Kube Boat executes Kubernetes API Server using the framework. So these variables affects to behavior of the API Server.
 
 Then, you can start a Kubernetes API Server by `boat start`.
 
@@ -35,7 +35,7 @@ Starting local Kubernetes API server...
 ...Done.
 ```
 
-Your kubectl context can be updated by `kubeconfig` sub command.
+Your kubectl context can be updated by `boat kubeconfig` .
 
 ```console
 $ boat kubeconfig
@@ -51,7 +51,7 @@ kube-public       Active   27s
 kube-system       Active   27s
 ```
 
-To stop the local API Server, use `stop` sub command.
+To stop the local API Server, use `boat stop` sub command.
 
 ```console
 $ boat stop
