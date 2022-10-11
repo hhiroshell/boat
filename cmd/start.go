@@ -51,6 +51,9 @@ func start(_ *cobra.Command, _ []string) error {
 	for _, path := range crdPaths {
 		serveOptions = append(serveOptions, "--"+crdPathFlag+"="+path)
 	}
+	for _, path := range webhookConfigurationPaths {
+		serveOptions = append(serveOptions, "--"+webhookConfigurationPathFlag+"="+path)
+	}
 
 	serve := exec.Command(boat, serveOptions...)
 	if err := serve.Start(); err != nil {

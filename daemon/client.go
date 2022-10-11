@@ -77,6 +77,26 @@ func (c *Client) Kubeconfig() (*Kubeconfig, error) {
 	return kubeconfig, nil
 }
 
+func (c *Client) WebhookConfig() (*WebhookConfig, error) {
+	res, err := c.client.Get("http://localhost" + webhookConfig)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	webhookConfig := &WebhookConfig{}
+	if err := json.Unmarshal(body, webhookConfig); err != nil {
+		return nil, fmt.Errorf("failed to Unmarshal response from the kube-boat daemon: %w", err)
+	}
+
+	return webhookConfig, nil
+}
+
 func (c *Client) StopDaemon() (string, error) {
 	req, err := http.NewRequest(http.MethodDelete, "http://localhost"+base, nil)
 	if err != nil {

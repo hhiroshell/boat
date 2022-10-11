@@ -38,6 +38,9 @@ func serve(_ *cobra.Command, _ []string) error {
 		CRDInstallOptions: envtest.CRDInstallOptions{
 			Paths: crdPaths,
 		},
+		WebhookInstallOptions: envtest.WebhookInstallOptions{
+			Paths: webhookConfigurationPaths,
+		},
 	}
 
 	ctx, cancel := signal.NotifyContext(context.Background(), unix.SIGINT, unix.SIGTERM, unix.SIGHUP)
