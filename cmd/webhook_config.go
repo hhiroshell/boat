@@ -2,17 +2,20 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"strconv"
+
+	"github.com/spf13/cobra"
 
 	"github.com/hhiroshell/boat/daemon"
 )
 
 var webhookConfigCmd = &cobra.Command{
 	Use:   "webhook-config",
-	Short: "Show API Server started by kube-boat.",
-	Long:  `Update kubectl context to use API Server started by kube-boat.`,
-	RunE:  webhookConfig,
+	Short: "Displays properties about admission / validation webhook server targeted by the kube-apiserver.",
+	Long: `Displays properties about admission / validation webhook server targeted by the kube-apiserver.
+Your local webhook server should be run with these properties.
+`,
+	RunE: webhookConfig,
 }
 
 func init() {
