@@ -92,6 +92,43 @@ var _ = Describe("Client", func() {
 		})
 	})
 
+	Describe("func WebhookConfig()", func() {
+		When("the kube-boat daemon returns correct webhook config response", func() {
+			var response = `{
+    "local-serving-host": "127.0.0.1",
+    "local-serving-port": 53971,
+    "local-serving-cert-dir": "/var/folders/vc/k8xt_qss50b2dcfpmrxwkbrc0000gn/T/envtest-serving-certs-2136998892"
+}`
+			It("should return a correctly unmarshalled result", func() {
+				httpmock.RegisterResponder(
+					http.MethodGet,
+					"http://localhost"+webhookConfig,
+					httpmock.NewStringResponder(http.StatusOK, response),
+				)
+
+				client := &Client{client: &http.Client{}}
+				webhookConfig, err := client.WebhookConfig()
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(webhookConfig.LocalServingHost).To(Equal("127.0.0.1"))
+				Expect(webhookConfig.LocalServingPort).To(Equal(53971))
+				Expect(webhookConfig.LocalServingCertDir).To(Equal("/var/folders/vc/k8xt_qss50b2dcfpmrxwkbrc0000gn/T/envtest-serving-certs-2136998892"))
+			})
+		})
+
+		When("the kube-boat daemon is not running", func() {
+			It("ends up with error", func() {
+				// do not register responder to emulate that the kube-boat daemon is not running
+
+				client := &Client{client: &http.Client{}}
+				kubeconfig, err := client.WebhookConfig()
+
+				Expect(err).To(HaveOccurred())
+				Expect(kubeconfig).To(BeNil())
+			})
+		})
+	})
+
 	Describe("func StopDaemon()", func() {
 		When("the kube-boat daemon returns accepting response", func() {
 			var response = `{

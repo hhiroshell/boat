@@ -122,6 +122,27 @@ var _ = Describe("Daemon", func() {
 				Expect(kubeconfig.ClientKey).Should(Equal(base64.StdEncoding.EncodeToString(testenv.Config.KeyData)))
 			})
 
+			It("makes kube-boat's \"webhookConfig\" endpoint available", func() {
+				var res *http.Response
+				Eventually(func() error {
+					var err error
+					res, err = daemonClient.Get("http://localhost" + webhookConfig)
+					return err
+				}, 15, 1).Should(Succeed())
+				defer res.Body.Close()
+
+				body, err := io.ReadAll(res.Body)
+				Expect(err).NotTo(HaveOccurred())
+
+				webhookConfig := &WebhookConfig{}
+				err = json.Unmarshal(body, webhookConfig)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(webhookConfig.LocalServingHost).Should(Equal(testenv.WebhookInstallOptions.LocalServingHost))
+				Expect(webhookConfig.LocalServingPort).Should(Equal(testenv.WebhookInstallOptions.LocalServingPort))
+				Expect(webhookConfig.LocalServingCertDir).Should(Equal(testenv.WebhookInstallOptions.LocalServingCertDir))
+			})
+
 			It("makes kube-boat's shutdown endpoint available", func() {
 				req, err := http.NewRequest(http.MethodDelete, "http://localhost"+base, nil)
 				Expect(err).NotTo(HaveOccurred())

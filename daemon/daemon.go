@@ -4,11 +4,10 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/base64"
-	"log"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"go.uber.org/multierr"
+	"log"
+	"net/http"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 )
 
@@ -25,9 +24,10 @@ func NewDaemon(sock *Socket, testEnv *envtest.Environment) *Daemon {
 }
 
 const (
-	base       = "/kube-boat"
-	readyz     = base + "/readyz"
-	kubeconfig = base + "/kubeconfig"
+	base          = "/kube-boat"
+	readyz        = base + "/readyz"
+	kubeconfig    = base + "/kubeconfig"
+	webhookConfig = base + "/webhookconfig"
 )
 
 func (d *Daemon) Run(ctx context.Context, cancel context.CancelFunc) error {
@@ -64,6 +64,13 @@ func (d *Daemon) Run(ctx context.Context, cancel context.CancelFunc) error {
 			Server:     config.Host,
 			ClientCert: cert,
 			ClientKey:  key,
+		})
+	})
+	engine.GET(webhookConfig, func(c *gin.Context) {
+		c.JSON(http.StatusOK, WebhookConfig{
+			LocalServingHost:    d.testEnv.WebhookInstallOptions.LocalServingHost,
+			LocalServingPort:    d.testEnv.WebhookInstallOptions.LocalServingPort,
+			LocalServingCertDir: d.testEnv.WebhookInstallOptions.LocalServingCertDir,
 		})
 	})
 	engine.DELETE(base, func(c *gin.Context) {
