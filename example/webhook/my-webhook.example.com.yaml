@@ -1,0 +1,51 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: my-mutating-webhook
+  namespace: kube-system
+webhooks:
+- name: my-mutating-webhook.example.com
+  admissionReviewVersions:
+    - v1
+  clientConfig:
+    service:
+      name: my-webhook
+      namespace: kube-system
+  namespaceSelector:
+    matchExpressions:
+    - key: runlevel
+      operator: NotIn
+      values: ["0","1"]
+  rules:
+  - operations: ["CREATE"]
+    apiGroups: ["*"]
+    apiVersions: ["*"]
+    resources: ["*"]
+    scope: "Namespaced"
+  sideEffects: None
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: my-validating-webhook
+  namespace: kube-system
+webhooks:
+- name: my-validating-webhook.example.com
+  admissionReviewVersions:
+    - v1
+  clientConfig:
+    service:
+      name: my-webhook
+      namespace: kube-system
+  sideEffects: None
+  namespaceSelector:
+    matchExpressions:
+    - key: environment
+      operator: In
+      values: ["prod","staging"]
+  rules:
+  - operations: ["CREATE"]
+    apiGroups: ["*"]
+    apiVersions: ["*"]
+    resources: ["*"]
+    scope: "Namespaced"
