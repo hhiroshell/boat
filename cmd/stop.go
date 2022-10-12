@@ -9,10 +9,12 @@ import (
 )
 
 var stopCmd = &cobra.Command{
-	Use:   "stop",
-	Short: "Stop the running local Kubernetes API server",
-	Long:  `Stop the running local Kubernetes API server`,
-	RunE:  stop,
+	Use:          "stop",
+	Short:        "Stop the running local Kubernetes API server",
+	Long:         `Stop the running local Kubernetes API server`,
+	SilenceUsage: true,
+
+	RunE: stop,
 }
 
 func init() {
@@ -22,12 +24,12 @@ func init() {
 func stop(_ *cobra.Command, _ []string) error {
 	client, err := daemon.NewClient()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create kube-boat daemon client: %w", err)
 	}
 
 	msg, err := client.StopDaemon()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to stop kube-boat daemon or kube-apiserver: %w", err)
 	}
 
 	fmt.Println(msg)

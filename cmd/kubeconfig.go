@@ -8,10 +8,12 @@ import (
 )
 
 var configCmd = &cobra.Command{
-	Use:   "kubeconfig",
-	Short: "Update kubectl context to use API Server started by kube-boat.",
-	Long:  `Update kubectl context to use API Server started by kube-boat.`,
-	RunE:  config,
+	Use:          "kubeconfig",
+	Short:        "Update kubectl context to use API Server started by kube-boat.",
+	Long:         `Update kubectl context to use API Server started by kube-boat.`,
+	SilenceUsage: true,
+
+	RunE: config,
 }
 
 func init() {
@@ -21,7 +23,7 @@ func init() {
 func config(_ *cobra.Command, _ []string) error {
 	client, err := daemon.NewClient()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create kube-boat daemon client: %w", err)
 	}
 
 	if err := setKubectlContext(client); err != nil {

@@ -15,6 +15,8 @@ var webhookConfigCmd = &cobra.Command{
 	Long: `Displays properties about admission / validation webhook server targeted by the kube-apiserver.
 Your local webhook server should be run with these properties.
 `,
+	SilenceUsage: true,
+
 	RunE: webhookConfig,
 }
 
@@ -25,12 +27,12 @@ func init() {
 func webhookConfig(_ *cobra.Command, _ []string) error {
 	client, err := daemon.NewClient()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create kube-boat daemon client: %w", err)
 	}
 
 	webhookConfig, err := client.WebhookConfig()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get webhook config: %w", err)
 	}
 
 	fmt.Println("local serving host: " + webhookConfig.LocalServingHost)

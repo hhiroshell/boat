@@ -11,10 +11,12 @@ import (
 )
 
 var statusCmd = &cobra.Command{
-	Use:   "status",
-	Short: "Check the status of local Kubernetes API server",
-	Long:  "Check the status of local Kubernetes API server",
-	RunE:  status,
+	Use:          "status",
+	Short:        "Check the status of local Kubernetes API server",
+	Long:         "Check the status of local Kubernetes API server",
+	SilenceUsage: true,
+
+	RunE: status,
 }
 
 func init() {
@@ -29,7 +31,7 @@ const (
 func status(_ *cobra.Command, _ []string) error {
 	client, err := daemon.NewClient()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create kube-boat daemon client: %w", err)
 	}
 
 	status := map[string]string{
