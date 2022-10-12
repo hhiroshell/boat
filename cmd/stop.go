@@ -9,10 +9,12 @@ import (
 )
 
 var stopCmd = &cobra.Command{
-	Use:   "stop",
-	Short: "Stop the running local Kubernetes API server",
-	Long:  `Stop the running local Kubernetes API server`,
-	RunE:  stop,
+	Use:          "stop",
+	Short:        "Stop the running local Kubernetes API server",
+	Long:         `Stop the running local Kubernetes API server`,
+	SilenceUsage: true,
+
+	RunE: stop,
 }
 
 func init() {

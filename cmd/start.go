@@ -18,10 +18,12 @@ var (
 	updateKubeconfig bool
 
 	startCmd = &cobra.Command{
-		Use:   "start",
-		Short: "Start local Kubernetes API server",
-		Long:  `Start local Kubernetes API server`,
-		RunE:  start,
+		Use:          "start",
+		Short:        "Start local Kubernetes API server",
+		Long:         `Start local Kubernetes API server`,
+		SilenceUsage: true,
+
+		RunE: start,
 	}
 )
 

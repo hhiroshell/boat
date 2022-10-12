@@ -8,10 +8,12 @@ import (
 )
 
 var configCmd = &cobra.Command{
-	Use:   "kubeconfig",
-	Short: "Update kubectl context to use API Server started by kube-boat.",
-	Long:  `Update kubectl context to use API Server started by kube-boat.`,
-	RunE:  config,
+	Use:          "kubeconfig",
+	Short:        "Update kubectl context to use API Server started by kube-boat.",
+	Long:         `Update kubectl context to use API Server started by kube-boat.`,
+	SilenceUsage: true,
+
+	RunE: config,
 }
 
 func init() {

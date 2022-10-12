@@ -11,10 +11,12 @@ import (
 )
 
 var statusCmd = &cobra.Command{
-	Use:   "status",
-	Short: "Check the status of local Kubernetes API server",
-	Long:  "Check the status of local Kubernetes API server",
-	RunE:  status,
+	Use:          "status",
+	Short:        "Check the status of local Kubernetes API server",
+	Long:         "Check the status of local Kubernetes API server",
+	SilenceUsage: true,
+
+	RunE: status,
 }
 
 func init() {

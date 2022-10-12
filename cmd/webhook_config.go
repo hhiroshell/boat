@@ -15,6 +15,8 @@ var webhookConfigCmd = &cobra.Command{
 	Long: `Displays properties about admission / validation webhook server targeted by the kube-apiserver.
 Your local webhook server should be run with these properties.
 `,
+	SilenceUsage: true,
+
 	RunE: webhookConfig,
 }
 

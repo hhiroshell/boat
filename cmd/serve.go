@@ -18,8 +18,10 @@ var serveCmd = &cobra.Command{
 that receives requests from other kube-boat commands.
 You should not execute this command directly. It is intended to
 be called via the kube-boat start command.`,
-	Hidden: true,
-	RunE:   serve,
+	Hidden:       true,
+	SilenceUsage: true,
+
+	RunE: serve,
 }
 
 func init() {
