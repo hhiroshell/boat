@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"os/signal"
 
 	"github.com/spf13/cobra"
@@ -33,7 +34,7 @@ func init() {
 func serve(_ *cobra.Command, _ []string) error {
 	sock, err := daemon.NewSocket()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create unix socket to communicate with kube-boat daemon: %w", err)
 	}
 
 	testEnv := &envtest.Environment{
@@ -48,7 +49,7 @@ func serve(_ *cobra.Command, _ []string) error {
 	ctx, cancel := signal.NotifyContext(context.Background(), unix.SIGINT, unix.SIGTERM, unix.SIGHUP)
 
 	if err := daemon.NewDaemon(sock, testEnv).Run(ctx, cancel); err != nil {
-		return err
+		return fmt.Errorf("failed to start kube-boat daemon or kube-apiserver: %w", err)
 	}
 
 	return nil

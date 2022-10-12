@@ -31,7 +31,7 @@ const (
 func status(_ *cobra.Command, _ []string) error {
 	client, err := daemon.NewClient()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create kube-boat daemon client: %w", err)
 	}
 
 	status := map[string]string{

@@ -37,7 +37,7 @@ func init() {
 func start(_ *cobra.Command, _ []string) error {
 	client, err := daemon.NewClient()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create kube-boat daemon client: %w", err)
 	}
 
 	err = client.Readyz()
@@ -51,7 +51,7 @@ func start(_ *cobra.Command, _ []string) error {
 
 	boat, err := os.Executable()
 	if err != nil {
-		return err
+		return fmt.Errorf("failted to find kube-boat executable to start kube-boat daemon: %w", err)
 	}
 
 	serveOptions := []string{"serve"}
@@ -64,7 +64,7 @@ func start(_ *cobra.Command, _ []string) error {
 
 	serve := exec.Command(boat, serveOptions...)
 	if err := serve.Start(); err != nil {
-		return err
+		return fmt.Errorf("failted to start kube-boat daemon or kube-apiserver: %w", err)
 	}
 	fmt.Println("Starting local Kubernetes API server...")
 
@@ -77,7 +77,7 @@ func start(_ *cobra.Command, _ []string) error {
 		select {
 		case <-ctx.Done():
 			fmt.Println()
-			return errors.New("failed to start kube-boat daemon or Kubernetes API Server before timed out")
+			return errors.New("failed to start kube-boat daemon or kube-apiserver before timed out")
 		case <-ticker.C:
 			fmt.Print(" 🚤")
 			if err := client.Readyz(); err == nil {

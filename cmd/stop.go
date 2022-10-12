@@ -24,12 +24,12 @@ func init() {
 func stop(_ *cobra.Command, _ []string) error {
 	client, err := daemon.NewClient()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create kube-boat daemon client: %w", err)
 	}
 
 	msg, err := client.StopDaemon()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to stop kube-boat daemon or kube-apiserver: %w", err)
 	}
 
 	fmt.Println(msg)
