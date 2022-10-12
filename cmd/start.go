@@ -14,17 +14,22 @@ import (
 	"github.com/hhiroshell/boat/daemon"
 )
 
-var startCmd = &cobra.Command{
-	Use:   "start",
-	Short: "Start local Kubernetes API server",
-	Long:  `Start local Kubernetes API server`,
-	RunE:  start,
-}
+var (
+	updateKubeconfig bool
+
+	startCmd = &cobra.Command{
+		Use:   "start",
+		Short: "Start local Kubernetes API server",
+		Long:  `Start local Kubernetes API server`,
+		RunE:  start,
+	}
+)
 
 func init() {
 	rootCmd.AddCommand(startCmd)
 
 	setServeFlags(startCmd)
+	startCmd.Flags().BoolVar(&updateKubeconfig, "update-kubeconfig", true, "Set the kubectl context to point to kube-apiserver started by this tool")
 }
 
 func start(_ *cobra.Command, _ []string) error {
@@ -75,8 +80,18 @@ func start(_ *cobra.Command, _ []string) error {
 			fmt.Print(" 🚤")
 			if err := client.Readyz(); err == nil {
 				fmt.Println("\n...Done.")
-				return nil
+				goto exit
 			}
 		}
 	}
+
+exit:
+
+	if updateKubeconfig {
+		if err := setKubectlContext(client); err != nil {
+			return fmt.Errorf("failed to update kubeconfig: %w", err)
+		}
+	}
+
+	return nil
 }
