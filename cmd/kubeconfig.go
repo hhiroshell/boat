@@ -1,10 +1,10 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
 
 	"github.com/hhiroshell/boat/daemon"
-	"github.com/hhiroshell/boat/kubectl"
 )
 
 var configCmd = &cobra.Command{
@@ -24,13 +24,8 @@ func config(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	kubeconfig, err := client.Kubeconfig()
-	if err != nil {
-		return err
-	}
-
-	if err := kubectl.SetContext(kubeconfig.Server, kubeconfig.ClientCert, kubeconfig.ClientKey, true); err != nil {
-		return err
+	if err := setKubectlContext(client); err != nil {
+		return fmt.Errorf("failed to update kubeconfig: %w", err)
 	}
 
 	return nil

@@ -1,6 +1,11 @@
 package cmd
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/spf13/cobra"
+
+	"github.com/hhiroshell/boat/daemon"
+	"github.com/hhiroshell/boat/kubectl"
+)
 
 var (
 	crdPaths    []string
@@ -23,4 +28,17 @@ func setServeFlags(cmd *cobra.Command) {
 		nil,
 		"paths to the directory or file containing webhook configurations",
 	)
+}
+
+func setKubectlContext(client *daemon.Client) error {
+	kubeconfig, err := client.Kubeconfig()
+	if err != nil {
+		return err
+	}
+
+	if err := kubectl.SetContext(kubeconfig.Server, kubeconfig.ClientCert, kubeconfig.ClientKey, true); err != nil {
+		return err
+	}
+
+	return nil
 }
